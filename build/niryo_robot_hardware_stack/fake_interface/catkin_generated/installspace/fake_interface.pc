@@ -1,0 +1,8 @@
+prefix=/home/ned/catkin_ws_niryo_ned/install
+
+Name: fake_interface
+Description: Description of fake_interface
+Version: 0.0.0
+Cflags: -I${prefix}/include
+Libs: -L${prefix}/lib -lfake_interface
+Requires: actionlib controller_manager conveyor_interface hardware_interface joints_interface niryo_robot_msgs roscpp std_msgs tools_interface

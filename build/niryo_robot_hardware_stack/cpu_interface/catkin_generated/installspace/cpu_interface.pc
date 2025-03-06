@@ -1,0 +1,8 @@
+prefix=/home/ned/catkin_ws_niryo_ned/install
+
+Name: cpu_interface
+Description: Description of cpu_interface
+Version: 0.0.0
+Cflags: -I${prefix}/include
+Libs: -L${prefix}/lib -lcpu_interface
+Requires: roscpp

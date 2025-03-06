@@ -1,0 +1,8 @@
+prefix=/home/ned/catkin_ws_niryo_ned/devel
+
+Name: niryo_robot_programs_manager
+Description: Description of niryo_robot_programs_manager
+Version: 3.2.0
+Cflags: -I/home/ned/catkin_ws_niryo_ned/devel/include
+Libs: -L${prefix}/lib 
+Requires: message_runtime

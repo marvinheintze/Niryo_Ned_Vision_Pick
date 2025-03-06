@@ -1,0 +1,2 @@
+- setup-file:
+    local-name: /home/ned/catkin_ws_niryo_ned/devel/setup.sh

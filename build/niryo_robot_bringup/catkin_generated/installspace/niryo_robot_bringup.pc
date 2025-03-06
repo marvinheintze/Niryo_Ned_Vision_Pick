@@ -1,0 +1,8 @@
+prefix=/home/ned/catkin_ws_niryo_ned/install
+
+Name: niryo_robot_bringup
+Description: Description of niryo_robot_bringup
+Version: 3.2.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

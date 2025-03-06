@@ -1,0 +1,8 @@
+prefix=/home/ned/catkin_ws_niryo_ned/devel
+
+Name: conveyor_interface
+Description: Description of conveyor_interface
+Version: 0.0.0
+Cflags: -I/home/ned/catkin_ws_niryo_ned/devel/include -I/home/ned/catkin_ws_niryo_ned/src/niryo_robot_hardware_stack/conveyor_interface/include
+Libs: -L${prefix}/lib -lconveyor_interface
+Requires: message_runtime roscpp std_msgs stepper_driver

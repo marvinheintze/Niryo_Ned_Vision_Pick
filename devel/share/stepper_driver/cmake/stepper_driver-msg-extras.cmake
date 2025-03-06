@@ -1,0 +1,2 @@
+set(stepper_driver_MESSAGE_FILES "/home/ned/catkin_ws_niryo_ned/src/niryo_robot_hardware_stack/stepper_driver/msg/StepperArrayMotorHardwareStatus.msg;/home/ned/catkin_ws_niryo_ned/src/niryo_robot_hardware_stack/stepper_driver/msg/StepperMotorCommand.msg;/home/ned/catkin_ws_niryo_ned/src/niryo_robot_hardware_stack/stepper_driver/msg/StepperMotorHardwareStatus.msg")
+set(stepper_driver_SERVICE_FILES "/home/ned/catkin_ws_niryo_ned/src/niryo_robot_hardware_stack/stepper_driver/srv/StepperCmd.srv")

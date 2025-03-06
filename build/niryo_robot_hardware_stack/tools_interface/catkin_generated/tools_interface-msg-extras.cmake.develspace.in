@@ -1,0 +1,2 @@
+set(tools_interface_MESSAGE_FILES "")
+set(tools_interface_SERVICE_FILES "/home/ned/catkin_ws_niryo_ned/src/niryo_robot_hardware_stack/tools_interface/srv/CloseGripper.srv;/home/ned/catkin_ws_niryo_ned/src/niryo_robot_hardware_stack/tools_interface/srv/OpenGripper.srv;/home/ned/catkin_ws_niryo_ned/src/niryo_robot_hardware_stack/tools_interface/srv/PingDxlTool.srv;/home/ned/catkin_ws_niryo_ned/src/niryo_robot_hardware_stack/tools_interface/srv/PullAirVacuumPump.srv;/home/ned/catkin_ws_niryo_ned/src/niryo_robot_hardware_stack/tools_interface/srv/PushAirVacuumPump.srv")

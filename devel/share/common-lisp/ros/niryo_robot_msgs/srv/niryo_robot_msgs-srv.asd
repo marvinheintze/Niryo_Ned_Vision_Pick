@@ -1,0 +1,23 @@
+
+(cl:in-package :asdf)
+
+(defsystem "niryo_robot_msgs-srv"
+  :depends-on (:roslisp-msg-protocol :roslisp-utils )
+  :components ((:file "_package")
+    (:file "GetBool" :depends-on ("_package_GetBool"))
+    (:file "_package_GetBool" :depends-on ("_package"))
+    (:file "GetInt" :depends-on ("_package_GetInt"))
+    (:file "_package_GetInt" :depends-on ("_package"))
+    (:file "GetNameDescriptionList" :depends-on ("_package_GetNameDescriptionList"))
+    (:file "_package_GetNameDescriptionList" :depends-on ("_package"))
+    (:file "GetStringList" :depends-on ("_package_GetStringList"))
+    (:file "_package_GetStringList" :depends-on ("_package"))
+    (:file "SetBool" :depends-on ("_package_SetBool"))
+    (:file "_package_SetBool" :depends-on ("_package"))
+    (:file "SetInt" :depends-on ("_package_SetInt"))
+    (:file "_package_SetInt" :depends-on ("_package"))
+    (:file "SetString" :depends-on ("_package_SetString"))
+    (:file "_package_SetString" :depends-on ("_package"))
+    (:file "Trigger" :depends-on ("_package_Trigger"))
+    (:file "_package_Trigger" :depends-on ("_package"))
+  ))

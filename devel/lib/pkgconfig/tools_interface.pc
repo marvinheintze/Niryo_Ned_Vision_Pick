@@ -1,0 +1,8 @@
+prefix=/home/ned/catkin_ws_niryo_ned/devel
+
+Name: tools_interface
+Description: Description of tools_interface
+Version: 0.0.0
+Cflags: -I/home/ned/catkin_ws_niryo_ned/devel/include -I/home/ned/catkin_ws_niryo_ned/src/niryo_robot_hardware_stack/tools_interface/include
+Libs: -L${prefix}/lib -ltools_interface
+Requires: dynamixel_driver message_runtime roscpp std_msgs

@@ -1,0 +1,40 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/ned/catkin_ws_niryo_ned/src/niryo_robot_hardware_stack/stepper_driver/include/stepper_driver/conveyor_state.hpp
+string
+-
+
+/home/ned/catkin_ws_niryo_ned/src/niryo_robot_hardware_stack/stepper_driver/include/stepper_driver/stepper_enum.hpp
+
+/home/ned/catkin_ws_niryo_ned/src/niryo_robot_hardware_stack/stepper_driver/include/stepper_driver/stepper_motor_cmd.hpp
+string
+-
+vector
+-
+stepper_driver/stepper_enum.hpp
+/home/ned/catkin_ws_niryo_ned/src/niryo_robot_hardware_stack/stepper_driver/include/stepper_driver/stepper_driver/stepper_enum.hpp
+
+/home/ned/catkin_ws_niryo_ned/src/niryo_robot_hardware_stack/stepper_driver/include/stepper_driver/stepper_motor_state.hpp
+string
+-
+stepper_driver/stepper_enum.hpp
+/home/ned/catkin_ws_niryo_ned/src/niryo_robot_hardware_stack/stepper_driver/include/stepper_driver/stepper_driver/stepper_enum.hpp
+
+/home/ned/catkin_ws_niryo_ned/src/niryo_robot_hardware_stack/stepper_driver/src/conveyor_state.cpp
+stepper_driver/conveyor_state.hpp
+/home/ned/catkin_ws_niryo_ned/src/niryo_robot_hardware_stack/stepper_driver/src/stepper_driver/conveyor_state.hpp
+
+/home/ned/catkin_ws_niryo_ned/src/niryo_robot_hardware_stack/stepper_driver/src/stepper_motor_cmd.cpp
+stepper_driver/stepper_motor_cmd.hpp
+/home/ned/catkin_ws_niryo_ned/src/niryo_robot_hardware_stack/stepper_driver/src/stepper_driver/stepper_motor_cmd.hpp
+
+/home/ned/catkin_ws_niryo_ned/src/niryo_robot_hardware_stack/stepper_driver/src/stepper_motor_state.cpp
+stepper_driver/stepper_motor_state.hpp
+/home/ned/catkin_ws_niryo_ned/src/niryo_robot_hardware_stack/stepper_driver/src/stepper_driver/stepper_motor_state.hpp
+

@@ -1,0 +1,2 @@
+set(dynamixel_driver_MESSAGE_FILES "/home/ned/catkin_ws_niryo_ned/src/niryo_robot_hardware_stack/dynamixel_driver/msg/DxlArrayMotorHardwareStatus.msg;/home/ned/catkin_ws_niryo_ned/src/niryo_robot_hardware_stack/dynamixel_driver/msg/DxlMotorCommand.msg;/home/ned/catkin_ws_niryo_ned/src/niryo_robot_hardware_stack/dynamixel_driver/msg/DxlMotorHardwareStatus.msg")
+set(dynamixel_driver_SERVICE_FILES "/home/ned/catkin_ws_niryo_ned/src/niryo_robot_hardware_stack/dynamixel_driver/srv/SendCustomDxlValue.srv")

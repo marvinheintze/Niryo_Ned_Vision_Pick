@@ -1,0 +1,8 @@
+prefix=/home/ned/catkin_ws_niryo_ned/devel
+
+Name: niryo_robot_debug
+Description: Description of niryo_robot_debug
+Version: 3.2.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: dynamixel_sdk mcp_can_rpi niryo_robot_msgs roscpp rospy std_msgs

@@ -1,0 +1,8 @@
+prefix=/home/ned/catkin_ws_niryo_ned/install
+
+Name: niryo_ned_moveit_config_w_gripper1
+Description: Description of niryo_ned_moveit_config_w_gripper1
+Version: 0.3.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

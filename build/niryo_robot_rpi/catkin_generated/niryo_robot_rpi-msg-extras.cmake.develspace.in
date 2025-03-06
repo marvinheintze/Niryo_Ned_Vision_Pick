@@ -1,0 +1,2 @@
+set(niryo_robot_rpi_MESSAGE_FILES "/home/ned/catkin_ws_niryo_ned/src/niryo_robot_rpi/msg/DigitalIOState.msg;/home/ned/catkin_ws_niryo_ned/src/niryo_robot_rpi/msg/LogStatus.msg")
+set(niryo_robot_rpi_SERVICE_FILES "/home/ned/catkin_ws_niryo_ned/src/niryo_robot_rpi/srv/ChangeMotorConfig.srv;/home/ned/catkin_ws_niryo_ned/src/niryo_robot_rpi/srv/GetDigitalIO.srv;/home/ned/catkin_ws_niryo_ned/src/niryo_robot_rpi/srv/LedBlinker.srv;/home/ned/catkin_ws_niryo_ned/src/niryo_robot_rpi/srv/SetDigitalIO.srv")

@@ -1,0 +1,8 @@
+prefix=/home/ned/catkin_ws_niryo_ned/install
+
+Name: dynamixel_sdk
+Description: Description of dynamixel_sdk
+Version: 3.4.7
+Cflags: -I${prefix}/include
+Libs: -L${prefix}/lib -ldynamixel_sdk
+Requires: roscpp

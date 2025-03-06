@@ -1,0 +1,38 @@
+# CMake generated Testfile for 
+# Source directory: /home/ned/catkin_ws_niryo_ned/src
+# Build directory: /home/ned/catkin_ws_niryo_ned/build
+# 
+# This file includes the relevant testing commands required for 
+# testing this directory and lists subdirectories to be tested as well.
+subdirs("gtest")
+subdirs("niryo_robot_bringup")
+subdirs("niryo_robot_description")
+subdirs("niryo_robot_system_api_client")
+subdirs("niryo_robot_user_interface")
+subdirs("realsense2_description-master")
+subdirs("niryo_robot_msgs")
+subdirs("niryo_robot_arm_commander")
+subdirs("niryo_robot_tools_commander")
+subdirs("niryo_robot_hardware_stack/cpu_interface")
+subdirs("niryo_robot_hardware_stack/dynamixel_sdk")
+subdirs("niryo_robot_hardware_stack/dynamixel_driver")
+subdirs("niryo_robot_hardware_stack/mcp_can_rpi")
+subdirs("niryo_robot_hardware_stack/niryo_robot_debug")
+subdirs("niryo_robot_modbus")
+subdirs("niryo_robot_serial_number")
+subdirs("niryo_robot_programs_manager")
+subdirs("niryo_robot_unit_tests")
+subdirs("niryo_robot_hardware_stack/stepper_driver")
+subdirs("niryo_robot_hardware_stack/conveyor_interface")
+subdirs("niryo_robot_hardware_stack/tools_interface")
+subdirs("niryo_robot_hardware_stack/joints_interface")
+subdirs("niryo_robot_rpi")
+subdirs("niryo_robot_vision")
+subdirs("niryo_robot_poses_handlers")
+subdirs("niryo_robot_gazebo")
+subdirs("realsense_gazebo_plugin-master")
+subdirs("niryo_robot_hardware_stack/fake_interface")
+subdirs("niryo_robot_moveit_config/ned/niryo_ned_moveit_config_standalone")
+subdirs("niryo_robot_moveit_config/ned/niryo_ned_moveit_config_w_gripper1")
+subdirs("niryo_robot_hardware_stack/niryo_robot_hardware_interface")
+subdirs("niryo_robot_python_ros_wrapper")

@@ -1,0 +1,8 @@
+prefix=/home/ned/catkin_ws_niryo_ned/devel
+
+Name: niryo_robot_modbus
+Description: Description of niryo_robot_modbus
+Version: 3.2.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: niryo_robot_msgs std_msgs

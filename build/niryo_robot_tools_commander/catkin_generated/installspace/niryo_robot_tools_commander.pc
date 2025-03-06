@@ -1,0 +1,8 @@
+prefix=/home/ned/catkin_ws_niryo_ned/install
+
+Name: niryo_robot_tools_commander
+Description: Description of niryo_robot_tools_commander
+Version: 3.0.0
+Cflags: -I${prefix}/include
+Libs: -L${prefix}/lib 
+Requires: actionlib_msgs geometry_msgs message_runtime niryo_robot_msgs std_msgs

@@ -1,0 +1,7 @@
+set(niryo_robot_arm_commander_SETUP_PY_SETUP_MODULE "distutils.core")
+set(niryo_robot_arm_commander_SETUP_PY_VERSION "3.2.0")
+set(niryo_robot_arm_commander_SETUP_PY_SCRIPTS "")
+set(niryo_robot_arm_commander_SETUP_PY_PACKAGES "niryo_robot_arm_commander")
+set(niryo_robot_arm_commander_SETUP_PY_PACKAGE_DIRS "src/niryo_robot_arm_commander")
+set(niryo_robot_arm_commander_SETUP_PY_MODULES "")
+set(niryo_robot_arm_commander_SETUP_PY_MODULE_DIRS "")
