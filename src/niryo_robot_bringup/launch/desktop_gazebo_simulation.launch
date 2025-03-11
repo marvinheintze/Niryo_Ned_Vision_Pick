@@ -11,6 +11,10 @@ This will reduce the amount of time spent waiting during program shutdown
     <arg name="gui" default="true"/>
     <arg name="hardware_version" value="ned"/>
 
+    <node pkg="robot_state_publisher" type="robot_state_publisher"  name="camera_state_publisher">
+      <param name="publish_frequency" type="double" value="30.0" />
+    </node>
+
     <!-- Load URDF -->
     <arg name="urdf_path" value="urdf/$(arg hardware_version)/niryo_$(arg hardware_version)_gripper1_n_camera.urdf.xacro" if="$(arg gripper_n_camera)"/>
     <arg name="urdf_path" value="urdf/$(arg hardware_version)/niryo_$(arg hardware_version)_gazebo.urdf.xacro" unless="$(arg gripper_n_camera)"/>
