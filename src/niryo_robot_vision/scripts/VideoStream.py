@@ -297,9 +297,9 @@ class GazeboStream(VideoStream):
     def __init__(self, calibration_object, publisher_compressed_stream):
         super(GazeboStream, self).__init__(calibration_object, publisher_compressed_stream)
 
-        self.__image_raw_sub = rospy.Subscriber('/gazebo_camera/image_raw', Image,
+        self.__image_raw_sub = rospy.Subscriber('/camera/color/image_raw', Image,
                                                 self.__callback_sub_image_raw)
-        self.__image_compressed_sub = rospy.Subscriber('/gazebo_camera/image_raw/compressed', CompressedImage,
+        self.__image_compressed_sub = rospy.Subscriber('/camera/color/image_raw/compressed', CompressedImage,
                                                        self.__callback_sub_image_compressed)
         self.__bridge = CvBridge()
         self.__last_image_raw = None

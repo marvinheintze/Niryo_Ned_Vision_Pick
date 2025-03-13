@@ -94,7 +94,7 @@ class VisionNode:
 
     @staticmethod
     def __generate_calib_object_from_gazebo_topic():
-        camera_info_message = rospy.wait_for_message("/gazebo_camera/camera_info", CameraInfo)
+        camera_info_message = rospy.wait_for_message("/camera/color/camera_info", CameraInfo)
         mtx = np.reshape(camera_info_message.K, (3, 3))
         dist = np.expand_dims(camera_info_message.D, axis=0)
         return CalibrationObject.set_from_values(mtx, dist)
