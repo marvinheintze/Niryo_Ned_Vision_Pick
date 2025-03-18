@@ -18,7 +18,7 @@ display_stream = True  # Only used if vision on computer
 # The pose from where the image processing happens
 observation_pose = PoseObject(
     x=0.17, y=0., z=0.35,
-    roll=-0.0, pitch=1.57, yaw=0.0,
+    roll=-0.0, pitch=1.7, yaw=-0.0,
 )
 
 # Center of the conditioning area
@@ -54,6 +54,7 @@ def process(niryo_robot):
     while try_without_success < 5:
         # Moving to observation pose
         niryo_robot.move_pose(observation_pose)
+        niryo_robot.wait(2)
         img_compressed = niryo_robot.get_img_compressed()
         img = uncompress_image(img_compressed)
         img = undistort_image(img, mtx, dist)
@@ -69,11 +70,11 @@ def process(niryo_robot):
 
         # Applying Threshold on ObjectColor
         if color in ["RED"]:
-        	color_hsv_setting = ColorHSV.RED.value
+            color_hsv_setting = ColorHSV.RED.value
         if color in ["BLUE"]:
-        	color_hsv_setting = ColorHSV.BLUE.value
+            color_hsv_setting = ColorHSV.BLUE.value
         if color in ["GREEN"]:
-        	color_hsv_setting = ColorHSV.GREEN.value
+            color_hsv_setting = ColorHSV.GREEN.value
         img_thresh = threshold_hsv(im_work, *color_hsv_setting)
 
         if display_stream:

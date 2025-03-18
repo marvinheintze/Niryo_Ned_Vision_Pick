@@ -41,7 +41,9 @@ This will reduce the amount of time spent waiting during program shutdown
         <arg name="simulation_mode" value="true"/>
     </include>
         <param name="/niryo_robot_vision/initialized" type="bool" value="true" unless="$(arg gripper_n_camera)"/>
-
+    
+    <!-- Rviz for seeing the different camera topics
     <param name="use_gui" value="$(arg gui)" />
     <node name="rviz" pkg="rviz" type="rviz" args="-d $(find realsense2_description)/rviz/urdf.rviz" required="true" />
+    -->
 </launch>
