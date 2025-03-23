@@ -3,6 +3,7 @@ import rospy
 
 from cv_bridge import CvBridge
 import cv2
+import ctypes
 import numpy as np
 from PIL import ImageEnhance
 from PIL import Image as PILImage
@@ -52,12 +53,12 @@ class VideoStream(object):
         rospy.Timer(rospy.Duration(1.0 / rospy.get_param("~is_active_rate")),
                     self._publish_is_active)
         # - SERVICES
-        self.__service_start_stop = rospy.Service('~start_stop_video_streaming',
+        self.__service_start_stop = rospy.Service('~start_stop_video_streaming' + str(id(self)),
                                                   SetBool, self._callback_start_stop)
 
-        rospy.Service('~set_saturation', SetImageParameter, self._callback_set_saturation)
-        rospy.Service('~set_brightness', SetImageParameter, self._callback_set_brightness)
-        rospy.Service('~set_contrast', SetImageParameter, self._callback_set_contrast)
+        rospy.Service('~set_saturation' + str(id(self)), SetImageParameter, self._callback_set_saturation)
+        rospy.Service('~set_brightness' + str(id(self)), SetImageParameter, self._callback_set_brightness)
+        rospy.Service('~set_contrast' + str(id(self)), SetImageParameter, self._callback_set_contrast)
 
     # -- CALLBACKS
     def _callback_start_stop(self, req):
@@ -141,6 +142,9 @@ class VideoStream(object):
         raise NotImplementedError
 
     def read_raw_img(self):
+        raise NotImplementedError
+    
+    def read_raw_depthimg(self):
         raise NotImplementedError
 
     def start(self):
@@ -295,35 +299,58 @@ class WebcamStream(VideoStream):
 class GazeboStream(VideoStream):
 
     def __init__(self, calibration_object, publisher_compressed_stream):
+        ctypes.CDLL("libX11.so").XInitThreads()
         super(GazeboStream, self).__init__(calibration_object, publisher_compressed_stream)
 
         self.__image_raw_sub = rospy.Subscriber('/camera/color/image_raw', Image,
                                                 self.__callback_sub_image_raw)
+        self.__depthimage_raw_sub = rospy.Subscriber('/camera/depth/image_raw', Image,
+                                                self.__callback_sub_depthimage_raw)
         self.__image_compressed_sub = rospy.Subscriber('/camera/color/image_raw/compressed', CompressedImage,
                                                        self.__callback_sub_image_compressed)
+        self.__depthimage_compressed_sub = rospy.Subscriber('/camera/depth/image_raw/compressed', CompressedImage,
+                                                       self.__callback_sub_depthimage_compressed)
         self.__bridge = CvBridge()
         self.__last_image_raw = None
+        self.__last_depthimage_raw = None
         self.__last_image_compressed_msg = CompressedImage()
+        self.__last_depthimage_compressed_msg = CompressedImage()
 
         self._running = True
         self._should_run = True
 
     def __callback_sub_image_raw(self, image_message):
         self.__last_image_raw = self.__bridge.imgmsg_to_cv2(image_message, desired_encoding="bgr8")
+    def __callback_sub_depthimage_raw(self, image_message):
+        self.__last_depthimage_raw = self.__bridge.imgmsg_to_cv2(image_message)
+        
 
     def __callback_sub_image_compressed(self, msg):
         self.__last_image_compressed_msg = msg
 
+    def __callback_sub_depthimage_compressed(self, msg):
+        #compressed image has to be converted to NumPy-Array
+        np_arr = np.frombuffer(msg.data, np.uint8)
+        #imdecode is used to convert the data from the Numpy-Array to an actual image with its original format(IMREAD_UNCHANGED)
+        image = cv2.imdecode(np_arr, cv2.IMREAD_UNCHANGED)
+        self.__last_depthimage_compressed_msg = image
+
     def read_undistorted(self):
         if self.__last_image_raw is None:
-            return None
+            return None, None
+        if self.__last_depthimage_raw is None:
+            return None, None
         if self._calibration_object.is_set():
-            return self._calibration_object.undistort_image(self.__last_image_raw)
+            return self._calibration_object.undistort_image(self.__last_image_raw), self._calibration_object.undistort_image(self.__last_depthimage_raw)
         else:
-            return self.__last_image_raw
+            print("im returning " + self.__last_image_raw + "\n")
+            return self.__last_image_raw, self.__last_depthimage_raw
+        
 
     def read_raw_img(self):
         return self.__last_image_raw
+    def read_raw_depthimg(self):
+        return self.__last_depthimage_raw
 
     def _loop(self):
         while not rospy.is_shutdown():
@@ -335,6 +362,18 @@ class GazeboStream(VideoStream):
             self._running = True
             if self.__last_image_raw is not None:
                 cv2.imshow("Video Stream", self.__last_image_raw)
+                cv2.waitKey(1)
+
+            if self.__last_depthimage_raw is not None:
+                normalized_frame = cv2.normalize(
+                    self.__last_depthimage_raw,
+                    None,
+                    alpha=0,
+                    beta=255,
+                    norm_type=cv2.NORM_MINMAX,
+                    dtype=cv2.CV_8U
+                )
+                cv2.imshow("Video Stream depth", normalized_frame)
                 cv2.waitKey(1)
 
             try:
