@@ -1,9 +1,16 @@
 from pyniryo import *
 import sys
 
+import rospy
+from sensor_msgs.msg import Image
+from cv_bridge import CvBridge
+import cv2
+
 # -- MUST Change these variables
 tool_used = ToolID.GRIPPER_1
 simulation_mode = True
+normalized_depth_image = None
+
 if simulation_mode:
     robot_ip_address, workspace_name = "127.0.0.1", "gazebo_1"
 else:
@@ -27,9 +34,18 @@ center_conditioning_pose = PoseObject(
     roll=-0.0, pitch=1.57, yaw=-1.57
 )
 
+# Callback method is getting a depth image from the topic /camera/depth/image_raw
+def depth_img_callback(msg):
+    global normalized_depth_image
+    bridge = CvBridge()
+    latest_depth_image = bridge.imgmsg_to_cv2(msg)
+    normalized_depth_image = cv2.normalize(latest_depth_image, None, 0, 255, cv2.NORM_MINMAX, dtype=cv2.CV_8U)
+
+def start_subscriber():
+    rospy.init_node('depth_image_subscriber', anonymous=True)
+    rospy.Subscriber("/camera/depth/image_raw", Image, depth_img_callback)
 
 # -- MAIN PROGRAM
-
 def process(niryo_robot):
     """
 
@@ -43,10 +59,12 @@ def process(niryo_robot):
     mtx, dist = niryo_robot.get_camera_intrinsics()
 
     color = "BLUE"
-    if len(sys.argv) > 1: color = sys.argv[1]
+    if len(sys.argv) > 1:
+        color = sys.argv[1]
     if color not in ["RED", "BLUE", "GREEN"] :
         print("Try again with a different Color: RED, BLUE or GREEN")
         sys.exit()
+
     count_other = 0
     other = False
   
@@ -55,6 +73,9 @@ def process(niryo_robot):
         # Moving to observation pose
         niryo_robot.move_pose(observation_pose)
         niryo_robot.wait(2)
+
+        show_img("Depth Image", normalized_depth_image)   
+
         img_compressed = niryo_robot.get_img_compressed()
         img = uncompress_image(img_compressed)
         img = undistort_image(img, mtx, dist)
@@ -64,7 +85,7 @@ def process(niryo_robot):
             print("Unable to find markers")
             try_without_success += 1
             if display_stream:
-                cv2.imshow("Last image saw", img)
+                cv2.imshow("Last image", img)
                 cv2.waitKey(25)
             continue
 
@@ -78,7 +99,7 @@ def process(niryo_robot):
         img_thresh = threshold_hsv(im_work, *color_hsv_setting)
 
         if display_stream:
-            show_img("Last image saw", img, wait_ms=100)
+            show_img("Last image", img, wait_ms=100)
             show_img("Image thresh", img_thresh, wait_ms=100)
         # Getting biggest contour/blob from threshold image
         contour = biggest_contour_finder(img_thresh)
@@ -107,7 +128,7 @@ def process(niryo_robot):
             color_hsv_setting = ColorHSV.ANY.value
             img_thresh = threshold_hsv(im_work, *color_hsv_setting)
             if display_stream:
-                show_img("Last image saw", img, wait_ms=100)
+                show_img("Last image", img, wait_ms=100)
                 show_img("Image thresh", img_thresh, wait_ms=100)
             contour = biggest_contour_finder(img_thresh)
             if contour is None or len(contour) == 0:
@@ -154,6 +175,8 @@ def process(niryo_robot):
 
 
 if __name__ == '__main__':
+    # Start the depth_img subscriber
+    start_subscriber()
     # Connect to robot
     robot = NiryoRobot(robot_ip_address)
     # Changing tool
