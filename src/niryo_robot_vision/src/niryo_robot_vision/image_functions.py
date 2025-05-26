@@ -484,3 +484,12 @@ def debug_markers(img, workspace_ratio=1.0):
     :rtype: numpy.array
     """
     return draw_markers(img, workspace_ratio)
+
+
+
+def extract_img_for_depth(img, depth_img, workspace_ratio=1.0):
+    """"
+    extract the depth image from the same marker coordinates as the RGB Image 
+    """
+    return extract_img_markers_depth(img, depth_img, workspace_ratio)
+

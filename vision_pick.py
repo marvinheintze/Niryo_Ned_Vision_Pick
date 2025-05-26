@@ -26,8 +26,8 @@ display_stream = True  # Only used if vision on computer
 
 # The pose from where the image processing happens
 observation_pose = PoseObject(
-    x=0.21, y=-0.0, z=0.22,
-    roll=0, pitch=1.85, yaw=0.0,
+    x=0.25, y=-0.0, z=0.35,
+    roll=0, pitch=1.84, yaw=0.0,
 )
 
 # Center of the conditioning area
@@ -79,7 +79,8 @@ def process(niryo_robot):
 
         img_compressed = niryo_robot.get_img_compressed()
         img = uncompress_image(img_compressed)
-        #img = undistort_image(img, mtx, dist)
+        img = undistort_image(img, mtx, dist)
+
         # extracting working area
         im_work = extract_img_workspace(img, workspace_ratio=1.0)
         if im_work is None:
@@ -145,7 +146,7 @@ def process(niryo_robot):
 
                 # Copy of normalized Depth Image for visualisation 
                 # Converting to BGR for red circle
-                depth_image_display = extract_img_markers_for_coords(img, workspace_ratio=1.0)
+                depth_image_display = extract_img_for_depth(img, normalized_depth_image, workspace_ratio=1.0)
                 depth_image_display = cv2.cvtColor(depth_image_display, cv2.COLOR_GRAY2BGR)
 
                 if 0 <= target_cx_depth < depth_width and 0 <= target_cy_depth < depth_heigth:
@@ -155,7 +156,7 @@ def process(niryo_robot):
                     print("Normalized depth value at scaled coords: {}".format(current_depth_pixel_value_normalized))
 
                     # Draw red circle on coordinates in depth image
-                    cv2.circle(depth_image_display, (target_cx_depth, target_cy_depth), 4, (0, 0, 255), 2) # red circle with radius 3 and thickness 2
+                    cv2.circle(depth_image_display, (target_cx_depth, target_cy_depth), 4, (0, 0, 255), 2)
                 else:
                     print("Target coordinates for depth are out of bounds.")
                 
@@ -165,15 +166,15 @@ def process(niryo_robot):
 
                      # height_offset based on depth value
                 if depth_value_normalized != -1: # only if depth_value is valid
-                    if depth_value_normalized < 230: # smaller value = nearer = higher
+                    if depth_value_normalized < 233: # smaller value = nearer = higher
                         height_offset = 0.035
                         print("Object classified as 'high' (Normalized Depth: {})".format(depth_value_normalized))
-                    else: # bigger value = more away = normal
+                    else: # bigger value = further away = normal
                         height_offset = 0.0
                         print("Object classified as 'normal' (Normalized Depth: {})".format(depth_value_normalized))
-                else: # fallback fopr no valid depth value
+                else: # fallback for no valid depth value
                     height_offset = 0.0 
-                    print("Object classification defaulted to 'normal' due to depth reading issue.")
+                    print("Object classification defaulted to 'normal' due to no valid depth value.")
             
             else: # depth images are None
                 print("Depth image not available for height adjustment. Using default height_offset.")
@@ -240,7 +241,7 @@ def process(niryo_robot):
         count += 1
 
 
-def extract_img_markers_for_coords(img, workspace_ratio=1.0):
+def extract_img_for_depth(img, depth_img, workspace_ratio=1.0):
     """
     Extract working area from an image thanks to 4 Niryo's markers
     :param img: OpenCV image which contain 4 Niryo's markers

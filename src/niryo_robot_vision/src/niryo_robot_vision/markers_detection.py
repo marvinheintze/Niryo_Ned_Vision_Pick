@@ -33,6 +33,33 @@ def extract_img_markers(img, workspace_ratio=1.0):
     return im_cut
 
 
+def extract_img_markers_depth(img, depth_img, workspace_ratio=1.0):
+    """
+    Extract working area from an image thanks to 4 Niryo's markers
+    :param img: OpenCV image which contain 4 Niryo's markers
+    :param workspace_ratio: Ratio between the width and the height of the area represented by the markers
+    :return: extracted and warped working area image
+    """
+
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+    img_thresh = cv2.adaptiveThreshold(gray, maxValue=255, adaptiveMethod=cv2.ADAPTIVE_THRESH_MEAN_C,
+                                       thresholdType=cv2.THRESH_BINARY, blockSize=15, C=25)
+
+    list_good_candidates = find_markers_from_img_thresh(img_thresh)
+    if not list_good_candidates or len(list_good_candidates) > 6:
+        return None
+
+    if len(list_good_candidates) == 4:
+        list_good_candidates = sort_markers_detection(list_good_candidates)
+    else:
+        list_good_candidates = complicated_sort_markers(list_good_candidates, workspace_ratio=workspace_ratio)
+        if list_good_candidates is None:
+            return None
+
+    im_cut = extract_sub_img(depth_img, list_good_candidates, ratio_w_h=workspace_ratio)
+    return im_cut
+
 def extract_sub_img(img, list_corners, ratio_w_h=1.0):
     """
     Extract an small image from a big one using a Perspective Warp

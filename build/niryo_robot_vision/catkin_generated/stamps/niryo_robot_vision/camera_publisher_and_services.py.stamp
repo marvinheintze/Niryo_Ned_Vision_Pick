@@ -42,6 +42,8 @@ class VisionNode:
         # PUBLISHERS
         self.__publisher_compressed_stream = rospy.Publisher('~compressed_video_stream',
                                                              CompressedImage, queue_size=1)
+        self.__publisher_depthcompressed_stream = rospy.Publisher('~compressed_depth_video_stream',
+                                                             CompressedImage, queue_size=1)
 
         # OBJECT DETECTION
         rospy.Service('~obj_detection_rel', ObjDetection,
@@ -52,15 +54,25 @@ class VisionNode:
             self.__calibration_object = self.__generate_calib_object_from_setup()
         else:
             self.__calibration_object = self.__generate_calib_object_from_gazebo_topic()
+            print("calibration ok \n")
+            self.__depth_calibration_object = self.__generate_depth_calib_object_from_gazebo_topic()
+            print("depth calibration ok \n")
 
         self.__camera_intrinsics_publisher = rospy.Publisher(
             '~camera_intrinsics', CameraInfo, latch=True, queue_size=1)
+        self.__depth_camera_intrinsics_publisher = rospy.Publisher(
+            '~depth_camera_intrinsics', CameraInfo, latch=True, queue_size=1)
+        
         self.publish_camera_intrinsics()
+        self.publish_depth_camera_intrinsics()
+
         rospy.logdebug("Vision Node - Camera Intrinsics published !")
 
         # Debug features
         rospy.Service('~take_picture', TakePicture,
                       self.__callback_take_picture)
+        rospy.Service('~take_depthpicture', TakePicture,
+                      self.__callback_take_depthpicture)
 
         self.__debug_compression_quality = rospy.get_param("~debug_compression_quality")
         rospy.Service('~debug_markers', DebugMarkers,
@@ -72,9 +84,11 @@ class VisionNode:
         rospy.logdebug("Vision Node - Creating Video Stream object")
         cls_ = GazeboStream if self.__simulation_mode else WebcamStream
         self.__video_stream = cls_(self.__calibration_object, self.__publisher_compressed_stream)
+        self.__depthvideo_stream = cls_(self.__depth_calibration_object, self.__publisher_depthcompressed_stream)
         rospy.logdebug("Vision Node - Video Stream Created")
 
         self.__video_stream.start()
+        self.__depthvideo_stream.start()
 
         # Set a bool to mentioned this node is initialized
         rospy.set_param('~initialized', True)
@@ -94,7 +108,14 @@ class VisionNode:
 
     @staticmethod
     def __generate_calib_object_from_gazebo_topic():
-        camera_info_message = rospy.wait_for_message("/gazebo_camera/camera_info", CameraInfo)
+        camera_info_message = rospy.wait_for_message("/camera/color/camera_info", CameraInfo)
+        mtx = np.reshape(camera_info_message.K, (3, 3))
+        dist = np.expand_dims(camera_info_message.D, axis=0)
+        return CalibrationObject.set_from_values(mtx, dist)
+        
+    @staticmethod
+    def __generate_depth_calib_object_from_gazebo_topic():
+        camera_info_message = rospy.wait_for_message("/camera/depth/camera_info", CameraInfo)
         mtx = np.reshape(camera_info_message.K, (3, 3))
         dist = np.expand_dims(camera_info_message.D, axis=0)
         return CalibrationObject.set_from_values(mtx, dist)
@@ -106,11 +127,19 @@ class VisionNode:
         msg_camera_info.K = list(mtx.flatten())
         msg_camera_info.D = list(dist.flatten())
         return self.__camera_intrinsics_publisher.publish(msg_camera_info)
+    
+    def publish_depth_camera_intrinsics(self):
+        mtx, dist = self.__depth_calibration_object.get_camera_info()
+
+        msg_camera_info = CameraInfo()
+        msg_camera_info.K = list(mtx.flatten())
+        msg_camera_info.D = list(dist.flatten())
+        return self.__depth_camera_intrinsics_publisher.publish(msg_camera_info)
 
     # - CALLBACK
     def __callback_get_obj_relative_pose(self, req):
         # Reading last image
-        img = self.__video_stream.read_undistorted()
+        img, _ = self.__video_stream.read_undistorted()
         if img is None:
             rospy.logwarn("Vision Node - Try to get object relative pose while stream is not running !")
             return CommandStatus.VIDEO_STREAM_NOT_RUNNING, ObjectPose(), "", "", CompressedImage()
@@ -142,8 +171,25 @@ class VisionNode:
             os.makedirs(path)
         time_string = time.strftime("%Y%m%d-%H%M%S")
 
-        img_full_path = "{}.jpg".format(os.path.join(path, time_string))
+        img_full_path = "{}_color.jpg".format(os.path.join(path, time_string))
         im = self.__video_stream.read_raw_img()
+        res_bool = cv2.imwrite(img_full_path, im)
+
+        if res_bool:
+            rospy.logdebug("Vision Node - Picture taken & saved")
+        else:
+            rospy.logwarn("Vision Node - Cannot save picture")
+
+        return res_bool
+    
+    def __callback_take_depthpicture(self, req):
+        path = os.path.expanduser(req.path)
+        if not os.path.isdir(path):
+            os.makedirs(path)
+        time_string = time.strftime("%Y%m%d-%H%M%S")
+
+        img_full_path = "{}_depth.jpg".format(os.path.join(path, time_string))
+        im = self.__depthvideo_stream.read_raw_depthimg()
         res_bool = cv2.imwrite(img_full_path, im)
 
         if res_bool:
@@ -154,7 +200,7 @@ class VisionNode:
         return res_bool
 
     def __callback_debug_markers(self, _):
-        img = self.__video_stream.read_undistorted()
+        img, _ = self.__video_stream.read_undistorted()
         if img is None:
             rospy.logwarn_throttle(2.0, "Vision Node - Try to get debug markers while stream is not running !")
             return False, CompressedImage()
@@ -164,7 +210,7 @@ class VisionNode:
         return markers_detected, msg_img
 
     def __callback_debug_color(self, req):
-        img = self.__video_stream.read_undistorted()
+        img, _ = self.__video_stream.read_undistorted()
         if img is None:
             rospy.logwarn_throttle(2.0, "Vision Node - Try to get debug colors while stream is not running !")
             return CompressedImage()

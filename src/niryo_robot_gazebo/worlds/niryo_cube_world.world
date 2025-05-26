@@ -15,7 +15,7 @@
             <include>
                 <uri>model://workspace_1</uri>
             </include>
-            <pose frame=''>0.25 0.0 0.0005 0.0 0.0 0.0</pose>
+            <pose frame=''>0.24 0.0 0.0005 0.0 0.0 0.0</pose>
         </model>
 
         <!-- Place Workspace -->

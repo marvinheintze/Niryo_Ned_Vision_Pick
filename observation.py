@@ -14,8 +14,8 @@ latest_color_image = None
 #    roll=0, pitch=1.87, yaw=0.15,
 #)
 observation_pose = PoseObject(
-    x=0.21, y=-0.0, z=0.22,
-    roll=0, pitch=1.85, yaw=0.0,
+    x=0.25, y=-0.0, z=0.35,
+    roll=0, pitch=1.84, yaw=0.0,
 )
 
 def color_img_callback(msg):
@@ -53,8 +53,12 @@ def start_subscriber():
 def process(niryo_robot):
     rospy.loginfo("Waiting for first image message...")
     start_time = rospy.get_time()
+    
+    niryo_robot.move_pose(observation_pose)
+
     timeout_seconds = 10.0 # Maximal 10 Sekunden warten
 
+    
     while latest_color_image is None and not rospy.is_shutdown():
         # Pruefen, ob Timeout erreicht wurde
         if rospy.get_time() - start_time > timeout_seconds:
