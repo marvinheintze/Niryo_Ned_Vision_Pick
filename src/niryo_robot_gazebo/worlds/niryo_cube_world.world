@@ -62,7 +62,7 @@
             <pose frame=''>0.267 -0.062 0.011 0.0 0.0 0.1</pose>
         </model>
 
-	<model name='cube_red_2'>
+	<model name='cylinder_blue'>
             <include>
                 <uri>model://cylinder</uri>
             </include>

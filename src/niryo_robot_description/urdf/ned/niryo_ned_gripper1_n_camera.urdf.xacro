@@ -59,8 +59,7 @@
 
 
     <!-- Mors 1 -->
-    <link
-            name="mors_1">
+    <link name="mors_1">
         <inertial>
             <origin xyz="-0.0049739 0.0067393 -0.023929"
                     rpy="0 0 0"/>
@@ -169,10 +168,14 @@
 
     <gazebo reference="mors_1">
         <material>Gazebo/DarkGrey</material>
+        <kp>1000000.0</kp>      <kd>10.0</kd>          <mu1>1.5</mu1>         <mu2>1.5</mu2>         <minDepth>0.001</minDepth>
+        <maxVel>0.01</maxVel>
     </gazebo>
 
     <gazebo reference="mors_2">
         <material>Gazebo/DarkGrey</material>
+        <kp>1000000.0</kp>      <kd>10.0</kd>          <mu1>1.5</mu1>         <mu2>1.5</mu2>         <minDepth>0.001</minDepth>
+        <maxVel>0.01</maxVel>
     </gazebo>
 
 </robot>

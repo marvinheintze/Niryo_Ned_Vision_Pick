@@ -24,7 +24,7 @@
         <geometry>
           <cylinder>
             <radius>0.01</radius>
-            <length>0.05</length>
+            <length>0.04</length>
           </cylinder>
         </geometry>
         <material>
@@ -49,9 +49,9 @@
         <max_contacts>50</max_contacts>
         <pose frame=''>0 0 0 0 -0 0</pose>
         <geometry>
-          <box>
-            <size>0.02 0.02 0.02</size>
-          </box>
+          <cylinder>
+        <radius>0.01</radius> <length>0.04</length> 
+      </cylinder>
         </geometry>
         <surface>
           <friction>

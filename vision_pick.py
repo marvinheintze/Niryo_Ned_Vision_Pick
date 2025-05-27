@@ -14,6 +14,7 @@ simulation_mode = True
 normalized_depth_image = None
 latest_depth_image = None
 list_good_candidates = None
+height_standard = 350
 
 if simulation_mode:
     robot_ip_address, workspace_name = "127.0.0.1", "gazebo_1"
@@ -130,12 +131,10 @@ def process(niryo_robot):
             height_offset = 0.0
             
             if normalized_depth_image is not None and latest_depth_image is not None:
+
                 im_work_heigth, im_work_width = im_work.shape[:2]
                 depth_heigth, depth_width = latest_depth_image.shape[:2] # Dimensions of the raw depth image
 
-                ## scaling coordinates from im_work to depth image
-                #target_cx_depth = int((float(cx) / w_im_work) * w_depth)
-                #target_cy_depth = int((float(cy) / h_im_work) * h_depth)
                 target_cx_depth = cx
                 target_cy_depth = cy
 
@@ -148,30 +147,36 @@ def process(niryo_robot):
                 # Converting to BGR for red circle
                 depth_image_display = extract_img_for_depth(img, normalized_depth_image, workspace_ratio=1.0)
                 depth_image_display = cv2.cvtColor(depth_image_display, cv2.COLOR_GRAY2BGR)
+                #extract raw img for exact depth values for height calculation
+                depth_image_raw = extract_img_for_depth(img, latest_depth_image, workspace_ratio=1.0)
 
                 if 0 <= target_cx_depth < depth_width and 0 <= target_cy_depth < depth_heigth:
-                    # give normalized depth value out in console
-                    current_depth_pixel_value_normalized = normalized_depth_image[target_cy_depth, target_cx_depth]
-                    depth_value_normalized = current_depth_pixel_value_normalized
-                    print("Normalized depth value at scaled coords: {}".format(current_depth_pixel_value_normalized))
-
+                    #get normalized and raw depth values for coords
+                    current_depth_pixel_value = depth_image_raw[target_cy_depth, target_cx_depth]
+                    depth_value_normalized = depth_image_display[target_cy_depth, target_cx_depth][0]
+                    # give normalized and raw depth value out in console
+                    print("Raw depth value at scaled coords: {}".format(current_depth_pixel_value))
+                    print("Normalized depth value at scaled coords: {}".format(depth_value_normalized))
                     # Draw red circle on coordinates in depth image
                     cv2.circle(depth_image_display, (target_cx_depth, target_cy_depth), 4, (0, 0, 255), 2)
                 else:
                     print("Target coordinates for depth are out of bounds.")
                 
+                #height calculation from depth value
+                height = height_standard - current_depth_pixel_value
+                if height < 0:
+                    height = 0
+
                 # Show depth image with red circle
                 if display_stream:
                     show_img("Depth Image with Target", depth_image_display, wait_ms=30)
 
                      # height_offset based on depth value
                 if depth_value_normalized != -1: # only if depth_value is valid
-                    if depth_value_normalized < 233: # smaller value = nearer = higher
-                        height_offset = 0.035
-                        print("Object classified as 'high' (Normalized Depth: {})".format(depth_value_normalized))
-                    else: # bigger value = further away = normal
-                        height_offset = 0.0
-                        print("Object classified as 'normal' (Normalized Depth: {})".format(depth_value_normalized))
+                    #scale the height difference to the height offset for the pick function
+                    height_offset = height * 0.0016
+                    print("Object classified with heigth_offset: {})".format(height_offset))
+                
                 else: # fallback for no valid depth value
                     height_offset = 0.0 
                     print("Object classification defaulted to 'normal' due to no valid depth value.")
@@ -179,7 +184,7 @@ def process(niryo_robot):
             else: # depth images are None
                 print("Depth image not available for height adjustment. Using default height_offset.")
                 height_offset = 0.0
-                #Das unbearbeitete Tiefenbild anzeigen, falls vorhanden und display_stream aktiv ist
+                #show depth image for eventual information if it's not None
                 if display_stream and normalized_depth_image is not None:
                     depth_image_display_fallback = cv2.cvtColor(normalized_depth_image, cv2.COLOR_GRAY2BGR)
                     show_img("Depth Image (Unavailable for Calc)", depth_image_display_fallback, wait_ms=30)
@@ -266,7 +271,7 @@ def extract_img_for_depth(img, depth_img, workspace_ratio=1.0):
         if list_good_candidates is None:
             return None
 
-    im_cut = extract_sub_img(normalized_depth_image, list_good_candidates, ratio_w_h=workspace_ratio)
+    im_cut = extract_sub_img(depth_img, list_good_candidates, ratio_w_h=workspace_ratio)
     return im_cut
 
 def find_markers_from_img_thresh(img_thresh, max_dist_between_centers=3, min_radius_circle=4,
